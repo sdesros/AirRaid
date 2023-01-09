@@ -1,43 +1,105 @@
-5 poke36878,15
-10 sc=0:hi=0:print"{clear}"
-20 dimb$(4):d$="{space*22}"
-30 a$=d$+"{black}{space*3}PO"+d$+"{left*5}{cm p}{cm o}{cm i}QQ{cm i}{cm o}{cm p}{space*10}"
-40 b$(0)="{green}{reverse on}{space*2}UI{reverse off}{up}{left*5}{green}"
-42 b$(1)="{green}{reverse on}{space*2}UI{down}{left*2}{sh -}{sh -}{reverse off}"
-43 b$(3)="{green}{reverse on}N{cm t*4}M{down}{left*6}{cm g}{cm t*4}{cm m}{down}{left*6}L{cm @*4}{sh @}{reverse off}"
-44 b$(2)="{green}{reverse on} U{sh asterisk*2}I{down}{left*4}{sh -}{space*2}{sh -}{reverse off}"
-46 b$(4)="{green}{reverse on}{space*6}{down}{left*6}{space*6}{down}{left*6}{space*6}{reverse off}"
-47 fort=0to8*22:poke8010+t,160:poke8010+t+30720,5:next
-48 g=g+1:ifg>10then200
-49 b=(int(rnd(1)*(21/5)+2)*5):poke36877,200
-50 fort=0to4
-52 dd=37154:p1=37151:p2=37152
-54 pokedd,127:e=peek(p2)and128
-56 j0=-(e=0)
-58 pokedd,127:e=peek(p1)
-60 j2=-((eand16)=0):fb=-((eand32)=0)
-62 ifj0anda<(21-6)thena=a+4
-63 ifj2anda>0thena=a-4
-64 iffbthengosub100
-66 print"{home}{red}score";sc;"{home}{down}";tab(a);a$:print"{down*13}"tab(b);b$(t)
-95 fory=1to10:next
-97 next
-99 goto 48
-100 c=a+3+7768
-110 forx=cto(c+(22*16))step22
-112 q1=peek(x):q2=peek(x+1)
-120 pokex,95:pokex+30720,5:pokex+1,105:pokex+30721,5
-121 ifq1=99+128orq2=128+99orq1=77+128orq2=77+128orq1=128+78orq2=78+128then140
-122 pokex,q1:pokex+1,q2
-130 next
-132 pokex-22,160:pokex+1-22,160:pokex+1-22+30720,5:pokex-22+30720,5
-135 return
-140 sc=sc+10:poke36876,200:fory=1to100:next:poke36876,0
-150 pokex,160:pokex+1,160:pokex+30720,5:poke37021,5
-160 return
-200 print"{clear}{blue}after passing 10{space*6}targets you scored:";sc
-210 ifsc<1thenprint"have you seen your{space*4}doctor lately...you{space*3}have terrible reflexes"
-212 ifsc>0andsc<60thenprint"not bad... if you weredead."
-214 ifsc<90andsc>50thenprint"very good! next time{space*2}try to get it perfect"
-216 ifsc>90 thenprint"{reverse on}perfect!!!!!!!!!!!!!!!congrats! pro!"
-218 poke36877,0
+!- Variables:
+!- B: random location for target
+!- H: random height for target
+!- A$: plane graphics
+!- B$: [] of various target graphics (far to close)
+!- T: for loop counter (used to loop through target graphics)
+!- SC: Score
+!- HI:
+!- G: number of gates that passed by
+!- A: plane location
+!- P: target time delay to wait for.
+!- DD: CIA location set joystick
+!- P1: Joystick peek1
+!- P2: Joystick peek2
+!- E: Joystick peek value
+!- J0: Flag joystick moved right
+!- J2: flag joystick moved left
+!- FB: flag firebutton hit.
+!- C: bomb starting location
+!- X: For loop bomb actual location.
+!- Q1 and Q2: left and right peek valus at bomb's location
+!- clear screen, inistialize graphcs, set volue
+10 PRINT"{clear}":POKE8185,0:POKE38905,6
+20 B=INT(RND(-1))
+30 DIMB$(4):D$="{space*22}"
+40 A$=D$+"{black}{space*3}PO"+D$+"{left*5}{cm p}{cm o}{cm i}QQ{cm i}{cm o}{cm p}{space*10}"
+50 B$(0)="{green}{reverse on}{space*2}UI{reverse off}"
+60 B$(1)="{green}{reverse on}{space*2}UI{down}{left*2}{sh -}{sh -}{reverse off}"
+70 B$(3)="{green}{reverse on}N{cm t*4}M{down}{left*6}{cm g}{cm t*4}{cm m}{down}{left*6}L{cm @*4}{sh @}{reverse off}"
+80 B$(2)="{green}{reverse on} U{sh asterisk*2}I{down}{left*4}{sh -}{space*2}{sh -}{reverse off}"
+90 B$(4)="{green}{reverse on}{space*6}{down}{left*6}{space*6}{down}{left*6}{space*6}{reverse off}"
+100 POKE36878,15
+!- initialize variables, wait 1 second and wait for player to figure.
+110 SC=0:HI=0:G=0:A=0:PRINT"{clear}"
+120 PRINT"{home}{down*15}{green}{reverse on}{space*175}{reverse off}{home}";
+130 POKE8185,160:POKE8185+30720,5
+140 P=TI+60
+150 IF TI<P THEN 150
+160 PRINT"{home}{down*6}{red}press fire..."
+!- this wait waits for the firebutton to be pressed before escaping
+170 WAIT 37137,32,32
+!- main game loop.
+180 PRINT"{home}{down*6}{green}{space*14}"
+!- increase count for gates, if all gates passed goto end subroutine
+190 G=G+1:IFG>10THEN490
+!- find location for gate
+200 B=(INT(RND(1)*16)):POKE36877,200
+210 H=(INT(RND(1)*2))
+!- loop through all 4 gate animations.
+220 FORT=0TO4
+!- read the joystick and move the plane's position
+230 DD=37154:P1=37151:P2=37152
+240 POKEDD,127:E=PEEK(P2)AND128
+250 J0=-(E=0)
+260 POKEDD,127:E=PEEK(P1)
+270 J2=-((EAND16)=0):FB=-((EAND32)=0)
+280 IFJ0ANDA<(21-8)THENA=A+3
+290 IFA>14THENA=14
+300 IFJ2ANDA>0THENA=A-3
+310 IFA<0THENA=0
+!- go to bombing subroutine
+320 IFFBTHENGOSUB370
+!- print status bar
+330 PRINT"{home}{red}score";SC;"{home}{right*11}{black}targets:";(10-G);"{home}{down}";SPC(A);A$:PRINT"{home}{down*16}";SPC(B+(H*21));B$(T);
+!- put in detay
+340 FORY=1TO10:NEXT
+!- finish gate animation loop
+350 NEXT
+!- restart game loop for next gate.
+360 GOTO 190
+!- bombing subroutine
+!- set bomb location to under middle of plane.
+370 C=A+3+7768
+!- loop from current location to bottom of screen.
+380 FORX=CTO(C+(22*16))STEP22
+!- look at bomb's location, should be limited to other parts.
+390 Q1=PEEK(X):Q2=PEEK(X+1)
+!- draw bom
+400 POKEX,95:POKEX+30720,5:POKEX+1,105:POKEX+30721,5
+!- if bomb hit parts of base, then go to hit subroutine (note: only last base has those values on line)
+410 IFQ1=99+128ORQ2=128+99ORQ1=77+128ORQ2=77+128ORQ1=128+78ORQ2=78+128THEN460
+!- erase bomb with same graphics that were underneath.
+420 POKEX,Q1:POKEX+1,Q2
+!- finish bombing run.
+430 NEXT
+!- end of bomb clean up and exit subroutine.
+440 POKEX-22,160:POKEX+1-22,160:POKEX+1-22+30720,5:POKEX-22+30720,5
+450 RETURN
+!- bomb hit, inscrease score, chime, cleanup and exit bomb subroutine
+460 SC=SC+10:POKE36876,200:FORY=1TO100:NEXT:POKE36876,0
+!- T: for loop counter (used to loop through target graphics)
+470 POKEX,160:POKEX+1,160:POKEX+30720,5:POKE37021,5
+480 RETURN
+!- end subroutine, different message based on score, put in a delay and allow for FB to be pressed in order to restart again.
+490 PRINT"{clear}{blue}after passing 10{space*6}targets you scored:";SC
+500 IFSC<1THENPRINT"have you seen your{space*4}doctor lately...you{space*3}have terrible reflexes"
+510 IFSC>0ANDSC<60THENPRINT"not bad... if you weredead."
+520 IFSC<90ANDSC>50THENPRINT"very good! next time{space*2}try to get it perfect"
+530 IFSC>90 THENPRINT"{reverse on}perfect!!!!!!!!!!!!!!!congrats! pro!"
+540 POKE36877,0
+550 P=TI+120
+560 IF TI<P THEN 560
+570 PRINT"{down}press fire to restart..."
+580 WAIT 37137,32,32
+590 GOTO 100

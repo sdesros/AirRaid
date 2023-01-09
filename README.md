@@ -4,6 +4,11 @@ A game written in BASIC for the unexpected VIC-20.
 # About the game
 Originally written around 1987 in BASIC and inspired by Sega's Afterburner. The game uses the "tab" function in print in order to display large elements quickly as opposed to when I would have used "peeks" and "pokes".
 
+This version uses some Quality of Life updates:
+* Fixes display bugs.
+* Game waits for user to hit firebutton before starting.
+* Game no longer exits back to BASIC after ending.
+
 # Instructions
 * Use the Joystick to move the plane on top of the screen left and right.
 * Use the firebutton to launch a bomb.
